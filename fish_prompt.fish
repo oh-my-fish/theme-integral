@@ -1,10 +1,10 @@
 # name: Integral
 function _git_branch_name
-  echo (command git symbolic-ref HEAD ^/dev/null | sed -e 's|^refs/heads/||')
+  echo (command git symbolic-ref HEAD 2> /dev/null | sed -e 's|^refs/heads/||')
 end
 
 function _upstream_count
-  echo (command git rev-list --count --left-right origin/(_git_branch_name)...HEAD ^/dev/null)
+  echo (command git rev-list --count --left-right origin/(_git_branch_name)...HEAD 2> /dev/null)
 end
 
 function _git_up_info
@@ -29,7 +29,7 @@ function _git_up_info
 end
 
 function _is_git_dirty
-  echo (command git status -s --ignore-submodules=dirty ^/dev/null)
+  echo (command git status -s --ignore-submodules=dirty 2> /dev/null)
 end
 
 function fish_prompt
@@ -59,7 +59,7 @@ end
 
 function fish_right_prompt
   set -l dark_gray (set_color 222)
-  
+
   echo -n -s $dark_gray ' ['(date +%H:%M:%S)'] '
 
 end
