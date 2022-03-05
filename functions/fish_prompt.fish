@@ -1,4 +1,10 @@
 # name: Integral
+# fork by: Froloket
+
+# Overwrite mode prompt as we use another approach
+function fish_mode_prompt
+end
+
 function _git_branch_name
   echo (command git symbolic-ref HEAD 2> /dev/null | sed -e 's|^refs/heads/||')
 end
@@ -39,7 +45,7 @@ function fish_prompt
   set -l green (set_color green)
 
   set -l arrow "∫"
-  set -l cwd $blue(prompt_pwd)
+  set -l cwd $blue(prompt_pwd) $normal
 
   if [ (_git_branch_name) ]
     set -l git_branch (_git_branch_name)
@@ -54,12 +60,30 @@ function fish_prompt
     end
   end
 
-  echo -n -s $cwd' '"$git_info" $normal $arrow ' '
+  # Set $arrow color depending on mode (when in vi mode)
+  if test "$fish_key_bindings" = fish_vi_key_bindings
+    or test "$fish_key_bindings" = fish_hybrid_key_bindings
+    switch $fish_bind_mode
+      case default
+        set arrow_color (set_color brblack)
+      case insert
+        set arrow_color (set_color brwhite)
+      case replace_one
+        set arrow_color (set_color green)
+      case replace
+        set arrow_color (set_color yellow)
+      case visual
+        set arrow_color (set_color magenta)
+    end
+  else
+    set arrow_color $normal
+  end
+
+  echo -n -s ' ' $cwd ' ' "$git_info" $arrow_color $arrow $normal ' '
 end
 
 function fish_right_prompt
   set -l dark_gray (set_color 222)
 
   echo -n -s $dark_gray ' ['(date +%H:%M:%S)'] '
-
 end
