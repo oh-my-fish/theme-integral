@@ -1,6 +1,13 @@
 # name: Integral
 # fork by: Froloket
 
+# Colors
+set blue (set_color blue)
+set yellow (set_color yellow)
+set normal (set_color normal)
+set green (set_color green)
+set dark_gray (set_color 222)
+
 # Overwrite mode prompt as we use another approach
 function fish_mode_prompt
 end
@@ -39,11 +46,6 @@ function _is_git_dirty
 end
 
 function fish_prompt
-  set -l blue (set_color blue)
-  set -l yellow (set_color yellow)
-  set -l normal (set_color normal)
-  set -l green (set_color green)
-
   set -l arrow "∫"
   set -l cwd $blue(prompt_pwd) $normal
 
@@ -83,7 +85,5 @@ function fish_prompt
 end
 
 function fish_right_prompt
-  set -l dark_gray (set_color 222)
-
-  echo -n -s $dark_gray ' ['(date +%H:%M:%S)'] '
+  echo -n -s $dark_gray ' ['(date +%H:%M:%S)'] ' $normal
 end
