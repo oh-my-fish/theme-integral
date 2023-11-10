@@ -8,6 +8,8 @@ set normal (set_color normal)
 set green (set_color green)
 set dark_gray (set_color 222)
 
+set arrow_symbol "∫"
+
 # Overwrite mode prompt as we use another approach
 function fish_mode_prompt
 end
@@ -18,6 +20,10 @@ end
 
 function _upstream_count
   echo (command git rev-list --count --left-right origin/(_git_branch_name)...HEAD 2> /dev/null)
+end
+
+function set_arrow -a symbol
+  set arrow_symbol $symbol
 end
 
 function _git_up_info
@@ -45,13 +51,27 @@ function _is_git_dirty
   echo (command git status -s --ignore-submodules=dirty 2> /dev/null)
 end
 
+function charrow -a mode
+  switch $mode
+    case "default"
+      set arrow_symbol "∫"
+    case "haskell" "lambda"
+      set arrow_symbol "λ"
+    case "arrow"
+      set arrow_symbol ">"
+    case "*"
+      charrow default
+  end
+end
+
 function fish_prompt
-  set -l arrow "∫"
-  set -l cwd $blue(prompt_pwd) $normal
+  if [ (prompt_pwd) != "~" ]
+    set cwd $blue(prompt_pwd) $normal
+  end
 
   if [ (_git_branch_name) ]
-    set -l git_branch (_git_branch_name)
-    set -l git_vs_upstream (_git_up_info)
+    set git_branch (_git_branch_name)
+    set git_vs_upstream (_git_up_info)
 
     if [ (_is_git_dirty) ]
       set git_info $yellow'('$git_branch "±" "$git_vs_upstream"')' $normal
@@ -81,7 +101,9 @@ function fish_prompt
     set arrow_color $normal
   end
 
-  echo -n -s ' ' $cwd ' ' "$git_info" $arrow_color $arrow $normal ' '
+  set arrow $arrow_color$arrow_symbol$normal
+
+  printf " $cwd$git_info$arrow "
 end
 
 function fish_right_prompt
